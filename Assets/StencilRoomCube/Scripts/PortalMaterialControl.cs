@@ -39,7 +39,7 @@ public class PortalMaterialControl : MonoBehaviour
 		MaterialPropertyBlock m_MaterialPropertyBlock = new MaterialPropertyBlock();
 		
 		m_MaterialPropertyBlock.Clear();
-		m_MaterialPropertyBlock.AddFloat("_StencilReferenceID", (float)m_StencilReferenceID);
+		m_MaterialPropertyBlock.SetFloat("_StencilReferenceID", (float)m_StencilReferenceID);
 
 		Renderer[] renderers = GetComponentsInChildren<Renderer>();
 		

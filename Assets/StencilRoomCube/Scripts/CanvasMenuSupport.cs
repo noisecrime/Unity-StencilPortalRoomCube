@@ -50,16 +50,7 @@ public class CanvasMenuSupport : MonoBehaviour
 
 	public void Toggle_ImageEffect( bool val)
 	{
-		if ( !val )
-			_warningTextComponent.gameObject.SetActive( false );
-		else
-		{
-			if ( SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Direct3D9 )
-			{
-				_warningTextComponent.text = "(Unity 5.2.2f1) Edge Detection: Only works in DX9 - Unity bug?";
-				_warningTextComponent.gameObject.SetActive( true );
-			}
-		}
+		_warningTextComponent.gameObject.SetActive( false );
 	}
 
 	public void Toggle_PortalContentCulling()

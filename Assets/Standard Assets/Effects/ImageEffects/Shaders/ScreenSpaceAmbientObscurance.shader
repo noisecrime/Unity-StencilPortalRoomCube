@@ -18,17 +18,19 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 
-Shader "Hidden/ScreenSpaceAmbientObscurance" 
+Shader "Hidden/ScreenSpaceAmbientObscurance"
 {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_AOTex("", 2D) = "" {}
+		_Rand("", 2D) = "" {}
 	}
 
 	CGINCLUDE
 
 	#include "UnityCG.cginc"
 
-	#ifdef SHADER_API_D3D11
+	#if defined(SHADER_API_D3D11) || defined(SHADER_API_GLCORE)
 		#define NUM_SAMPLES (15)
 	#else
 		#define NUM_SAMPLES (11)
@@ -36,12 +38,14 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 
 	#define FAR_PLANE_Z (300.0)
 	#define NUM_SPIRAL_TURNS (7)
-	#define bias (0.01) 
+	#define bias (0.01)
 
 	float _Radius;
 	float _Radius2; // _Radius * _Radius;
 	float _Intensity;
 	float4 _ProjInfo;
+	float4 _ProjInfoLeft;
+	float4 _ProjInfoRight;
 	float4x4 _ProjectionInv; // ref only
 
 	sampler2D_float _CameraDepthTexture;
@@ -50,6 +54,10 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 	sampler2D _MainTex;
 
 	float4 _MainTex_TexelSize;
+	half4 _MainTex_ST;
+
+	half4 _AOTex_ST;
+	half4 _CameraDepthTexture_ST;
 
 	static const float gaussian[5] = { 0.153170, 0.144893, 0.122649, 0.092902, 0.062970 };  // stddev = 2.0
 
@@ -64,7 +72,7 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 	/** Filter _Radius in pixels. This will be multiplied by SCALE. */
 	#define R                   (4)
 
-	struct v2f 
+	struct v2f
 	{
 		float4 pos : SV_POSITION;
 		float2 uv : TEXCOORD0;
@@ -80,15 +88,20 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 		#if UNITY_UV_STARTS_AT_TOP
 		if (_MainTex_TexelSize.y < 0)
 			o.uv2.y = 1-o.uv2.y;
-		#endif				
+		#endif
 		return o;
 	}
 
-	float3 ReconstructCSPosition(float2 S, float z) 
+	float3 ReconstructCSPosition(float2 S, float z)
 	{
 		float linEyeZ = LinearEyeDepth(z);
-		return float3(( ( S.xy * _MainTex_TexelSize.zw) * _ProjInfo.xy + _ProjInfo.zw) * linEyeZ, linEyeZ);
-		
+#ifdef UNITY_SINGLE_PASS_STEREO
+		float4 projInfo = (unity_StereoEyeIndex == 0) ? _ProjInfoLeft : _ProjInfoRight;
+		return float3((S.xy * projInfo.xy + projInfo.zw) * linEyeZ, linEyeZ);
+#else		
+		return float3(( S.xy * _ProjInfo.xy + _ProjInfo.zw) * linEyeZ, linEyeZ);
+#endif
+
 		/*
 		// for reference
 		float4 clipPos = float4(S*2.0-1.0, (z*2-1), 1);
@@ -139,14 +152,14 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 	float UnpackKey(float2 p)
 	{
 		return p.x * (256.0 / 257.0) + p.y * (1.0 / 257.0);
-	} 
+	}
 
 
 	/** Read the camera-space position of the point at screen-space pixel ssP */
 	float3 GetPosition(float2 ssP) {
 		float3 P;
 
-		P.z = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, ssP.xy);
+		P.z = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, UnityStereoScreenSpaceUVAdjust(ssP.xy, _CameraDepthTexture_ST));
 
 		// Offset to pixel center
 		P = ReconstructCSPosition(float2(ssP) /*+ float2(0.5, 0.5)*/, P.z);
@@ -154,12 +167,12 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 	}
 
 	/** Read the camera-space position of the point at screen-space pixel ssP + unitOffset * ssR.  Assumes length(unitOffset) == 1 */
-	float3 GetOffsetPosition(float2 ssC, float2 unitOffset, float ssR) 
+	float3 GetOffsetPosition(float2 ssC, float2 unitOffset, float ssR)
 	{
 		float2 ssP = saturate(float2(ssR*unitOffset) + ssC);
 
 		float3 P;
-		P.z = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, ssP.xy);
+		P.z = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, UnityStereoScreenSpaceUVAdjust(ssP.xy, _CameraDepthTexture_ST));
 
 		// Offset to pixel center
 		P = ReconstructCSPosition(float2(ssP)/* + float2(0.5, 0.5)*/, P.z);
@@ -169,8 +182,8 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 
 	/** Compute the occlusion due to sample with index \a i about the pixel at \a ssC that corresponds
     to camera-space point \a C with unit normal \a n_C, using maximum screen-space sampling _Radius \a ssDiskRadius */
-	
-	float SampleAO(in float2 ssC, in float3 C, in float3 n_C, in float ssDiskRadius, in int tapIndex, in float randomPatternRotationAngle) 
+
+	float SampleAO(in float2 ssC, in float3 C, in float3 n_C, in float ssDiskRadius, in int tapIndex, in float randomPatternRotationAngle)
 	{
 		// Offset on the unit disk, spun for this pixel
 		float ssR;
@@ -180,13 +193,13 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 		// The occluding point in camera space
 		float3 Q = GetOffsetPosition(ssC, unitOffset, ssR);
 
-		float3 v = Q - C; 
+		float3 v = Q - C;
 
 		float vv = dot(v, v);
 		float vn = dot(v, n_C);
 
 	    const float epsilon = 0.01;
-	    float f = max(_Radius2 - vv, 0.0); 
+	    float f = max(_Radius2 - vv, 0.0);
 	    return f * f * f * max((vn - bias) / (epsilon + vv), 0.0);
 	}
 
@@ -194,7 +207,7 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 	{
 		float4 fragment = fixed4(1,1,1,1);
 
-		// Pixel being shaded 
+		// Pixel being shaded
 		float2 ssC = i.uv2.xy;// * _MainTex_TexelSize.zw;
 
 		// View space point being shaded
@@ -209,9 +222,9 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 		//packKey(CSZToKey(C.z), bilateralKey);
 
 		float randomPatternRotationAngle = 1.0;
-		#ifdef SHADER_API_D3D11
+	#if defined(SHADER_API_D3D11) || defined(SHADER_API_GLCORE)
 			int2 ssCInt = ssC.xy * _MainTex_TexelSize.zw;
-			randomPatternRotationAngle = (3 * ssCInt.x ^ ssCInt.y + ssCInt.x * ssCInt.y) * 10;
+			randomPatternRotationAngle = frac(sin(dot(i.uv, float2(12.9898, 78.233))) * 43758.5453) * 1000.0;
 		#else
 			// TODO: make dx9 rand better
 			randomPatternRotationAngle = tex2D(_Rand, i.uv*12.0).x * 1000.0;
@@ -250,26 +263,26 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 		float3 C = GetPosition(i.uv.xy);
 
 		packKey(CSZToKey(C.z), fragment.gb);
-		fragment.ra = tex2D(_MainTex, i.uv.xy).ra;
+		fragment.ra = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv.xy, _MainTex_ST)).ra;
 
 		return fragment;
 	}
 
 	float4 fragApply (v2f i) : SV_Target
 	{
-		float4 ao = tex2D(_AOTex, i.uv2.xy);
-		return tex2D(_MainTex, i.uv.xy) * ao.rrrr;
+		float4 ao = tex2D(_AOTex, UnityStereoScreenSpaceUVAdjust(i.uv2.xy, _AOTex_ST));
+		return tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv.xy, _MainTex_ST)) * ao.rrrr;
 	}
 
 	float4 fragApplySoft (v2f i) : SV_Target
 	{
-		float4 color = tex2D(_MainTex, i.uv.xy);
+		float4 color = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv.xy, _MainTex_ST));
 
-		float ao = tex2D(_AOTex, i.uv2.xy).r;
-		ao += tex2D(_AOTex, i.uv2.xy + _MainTex_TexelSize.xy * 0.75).r;
-		ao += tex2D(_AOTex, i.uv2.xy - _MainTex_TexelSize.xy * 0.75).r;
-		ao += tex2D(_AOTex, i.uv2.xy + _MainTex_TexelSize.xy * float2(-0.75,0.75)).r;
-		ao += tex2D(_AOTex, i.uv2.xy - _MainTex_TexelSize.xy * float2(-0.75,0.75)).r;
+		float ao = tex2D(_AOTex, UnityStereoScreenSpaceUVAdjust(i.uv2.xy, _AOTex_ST)).r;
+		ao += tex2D(_AOTex, UnityStereoScreenSpaceUVAdjust(i.uv2.xy, _AOTex_ST) + _MainTex_TexelSize.xy * 0.75).r;
+		ao += tex2D(_AOTex, UnityStereoScreenSpaceUVAdjust(i.uv2.xy, _AOTex_ST) - _MainTex_TexelSize.xy * 0.75).r;
+		ao += tex2D(_AOTex, UnityStereoScreenSpaceUVAdjust(i.uv2.xy, _AOTex_ST) + _MainTex_TexelSize.xy * float2(-0.75,0.75)).r;
+		ao += tex2D(_AOTex, UnityStereoScreenSpaceUVAdjust(i.uv2.xy, _AOTex_ST) - _MainTex_TexelSize.xy * float2(-0.75,0.75)).r;
 
 		return color * float4(ao,ao,ao,5)/5;
 	}
@@ -278,9 +291,9 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 	{
 		float4 fragment = float4(1,1,1,1);
 
-		float2 ssC = i.uv.xy;
+		float2 ssC = UnityStereoScreenSpaceUVAdjust(i.uv.xy, _MainTex_ST);
 
-		float4 temp = tex2Dlod(_MainTex, float4(i.uv.xy,0,0));
+		float4 temp = tex2Dlod(_MainTex, float4(UnityStereoScreenSpaceUVAdjust(i.uv.xy, _MainTex_ST),0,0));
 
 		float2 passthrough2 = temp.gb;
 		float key = UnpackKey(passthrough2);
@@ -288,9 +301,9 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 		float sum = temp.r;
 
 		/*
-		if (key >= 0.999) { 
+		if (key >= 0.999) {
 			// Sky pixel (if you aren't using depth keying, disable this test)
-			fragment.gb = passthrough2; 
+			fragment.gb = passthrough2;
 			return fragment;
 		}
 		*/
@@ -299,7 +312,7 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 
 		float BASE = gaussian[0] * 0.5; // ole: i decreased
 		float totalWeight = BASE;
-		sum *= totalWeight; 
+		sum *= totalWeight;
 
 		for (int r = -R; r <= R; ++r) {
 			// We already handled the zero case above.  This loop should be unrolled and the branch discarded
@@ -316,12 +329,12 @@ Shader "Hidden/ScreenSpaceAmbientObscurance"
 
 				sum += value * weight;
 				totalWeight += weight;
-			} 
+			}
 		}
 
 		const float epsilon = 0.0001;
-		fragment = sum / (totalWeight + epsilon);	
-		
+		fragment = sum / (totalWeight + epsilon);
+
 		fragment.gb = passthrough2;
 
 		return fragment;
@@ -340,7 +353,7 @@ SubShader {
 		#pragma vertex vert
 		#pragma fragment fragAO
 		#pragma target 3.0
-		
+
 		ENDCG
 	}
 
@@ -352,8 +365,8 @@ SubShader {
 
 		#pragma vertex vert
 		#pragma fragment fragBlurBL
-		#pragma target 3.0 
-		
+		#pragma target 3.0
+
 		ENDCG
 	}
 
@@ -365,8 +378,8 @@ SubShader {
 
 		#pragma vertex vert
 		#pragma fragment fragApply
-		#pragma target 3.0 
-		
+		#pragma target 3.0
+
 		ENDCG
 	}
 
@@ -378,8 +391,8 @@ SubShader {
 
 		#pragma vertex vert
 		#pragma fragment fragApplySoft
-		#pragma target 3.0 
-		
+		#pragma target 3.0
+
 		ENDCG
 	}
 
@@ -391,8 +404,8 @@ SubShader {
 
 		#pragma vertex vert
 		#pragma fragment fragUpsample
-		#pragma target 3.0 
-		
+		#pragma target 3.0
+
 		ENDCG
 	}
 }
