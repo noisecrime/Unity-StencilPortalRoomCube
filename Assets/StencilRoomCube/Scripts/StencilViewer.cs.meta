@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 7dc54fbfcb99b1f499cbebf1b61e39ff
+timeCreated: 1489055817
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - _stencilTable: {fileID: 2800000, guid: 9ca0ea91c2b8b4540b33ca7ef54bf8af, type: 3}
+  - _stencilViewerColor: {fileID: 4800000, guid: 3f7f728013663364e89a05329b48e06f,
+      type: 3}
+  - _stencilViewerTable: {fileID: 4800000, guid: 172aa62b39c821d4481fee42e457e8f3,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

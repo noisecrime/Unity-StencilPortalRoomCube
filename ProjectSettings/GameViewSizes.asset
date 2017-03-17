@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 13
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12330, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Standalone:
+    m_Custom:
+    - m_BaseText: HD Ready
+      m_SizeType: 1
+      m_Width: 1280
+      m_Height: 720
+  m_WebPlayer:
+    m_Custom: []
+  m_iOS:
+    m_Custom: []
+  m_Android:
+    m_Custom: []
+  m_XBox360:
+    m_Custom: []
+  m_PS3:
+    m_Custom: []
+  m_Wii:
+    m_Custom: []
+  m_BB10:
+    m_Custom: []

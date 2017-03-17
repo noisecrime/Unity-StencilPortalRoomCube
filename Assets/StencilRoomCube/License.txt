@@ -1,0 +1,24 @@
+Portal Room Cube via Stencils Project License.
+Copyright (c) 2013, NoiseCrime.
+All rights reserved.
+
+
+You are permitted to re-use the c# code and stencil shaders from within this project in your own projects either commercial or free, with the exception of the Unity Glass Refraction (Pro Only) shader found in the 'Standard Assets' folder, which is copyright of Unity Technologies.
+
+
+You are not permitted to use, modify or redistribute any of the actual content, assets, textures, images or models.
+
+
+You may not republish or redistributed this project or any part of it, in any form (print, online, etc), for free or commercial gain, without the express permission of the author.
+
+
+If you use any of the code or shaders from this project it would be nice to get a shout out.
+Contact Noisecrime at noise@noisecrime.com
+
+
+The Lerpz and Robot Arm models and assets (including textures) are copyright Unity Technologies and can be found in their respective tutorials on the Unity asset store.
+
+
+
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

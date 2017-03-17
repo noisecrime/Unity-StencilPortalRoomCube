@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 48633463f37b1554889e0a0ad9c85fa9
+timeCreated: 1489050715
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - _glassWallMaterial: {fileID: 2100000, guid: 848918a99d11f25f110026ca44295342,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
