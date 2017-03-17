@@ -4,7 +4,7 @@ Example Unity Project illustrating how to use stencils to create volumes that sh
 To learn more watch the demo video here - https://www.youtube.com/watch?v=5DKIP9N-OB4
 
 
-Originally built in Unity 4.2, the project has recently been updated to Unity 5.2.2f1, with improvements such as
+Originally built in Unity 4.2, the project has recently been updated to Unity 5.4.2f2, with improvements such as
 
   Stencil Shader simplification.
   Stencil Shaders no longer using hard-coded values.
@@ -13,4 +13,6 @@ Originally built in Unity 4.2, the project has recently been updated to Unity 5.
   Updated relevant packages - e.g. Image Effects.
   Improved examples with new UI to toggle features on/off.
   
-Additional updates planned to other braches to support different Unity versions.
+The GitHub Repository now contains
+Master - Unity 5.4.2f2
+Branch - Unity 5.2.2f1
