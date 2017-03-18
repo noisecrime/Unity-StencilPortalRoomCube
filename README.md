@@ -15,5 +15,9 @@ Originally built in Unity 4.2, the project has recently been updated to Unity 5.
   Improved examples with new UI to toggle features on/off.
   
 The GitHub Repository now contains
+
 Master - Unity 5.4.2f2
+
 Branch - Unity 5.2.2f1
+
+![PortalRoomCubeStencilSplash](https://raw.githubusercontent.com/noisecrime/Unity-StencilPortRoomCube/master/readmesplash.jpg)
