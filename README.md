@@ -1,4 +1,4 @@
-# Unity-StencilPortRoomCube
+# Unity-StencilPortalRoomCube
 Example Unity Project illustrating how to use stencils to create volumes that share the same space via portal tehcnique.
 
 To learn more watch the demo video here - https://www.youtube.com/watch?v=5DKIP9N-OB4
