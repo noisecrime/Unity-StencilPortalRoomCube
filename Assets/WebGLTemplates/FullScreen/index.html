@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    	<meta charset="utf-8">
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    	<title>%UNITY_WEB_NAME%</title>
+	<link rel="apple-touch-icon" sizes="180x180" href="TemplateData/FavIcons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="TemplateData/FavIcons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="TemplateData/FavIcons/favicon-16x16.png">
+	<link rel="manifest" href="TemplateData/FavIcons/manifest.json">
+	<link rel="mask-icon" href="TemplateData/FavIcons/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="theme-color" content="#ffffff">
+    	<script src="TemplateData/UnityProgress.js"></script>
+    	<style>
+   * {
+  		margin: 0;
+  		padding: 0;
+	}
+
+	canvas 
+	{
+  		width: 100%;
+  		height: 100%;
+ 		position: absolute;
+	}
+    	</style>
+  </head>
+  <body>
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" height="%UNITY_HEIGHT%px" width="%UNITY_WIDTH%px"></canvas>
+    %UNITY_WEBGL_LOADER_GLUE%
+  </body>
+</html>

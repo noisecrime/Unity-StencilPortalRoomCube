@@ -7,7 +7,13 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/StencilRoomCube/Scenes/scene.StencilRoomComplexGrid.unity
+    guid: 41832b8f0c23c2747b7e2b5e4ac96f05
   - enabled: 0
     path: Assets/StencilRoomCube/Scenes/scene.StencilRoomComplex.unity
+    guid: 895cfe14ccfd5124f8bb3f7591b30039
   - enabled: 0
     path: Assets/StencilRoomCube/Scenes/scene.StencilRoomBasic.unity
+    guid: 44a1bd57cc9a4e14d81e389ffb2dfd5d
+  - enabled: 0
+    path: Assets/StencilRoomCube/Scenes/scene.StencilRoomComplexGridThinStructs.unity
+    guid: b3baabdab1140264a94b21ba5bdb5850

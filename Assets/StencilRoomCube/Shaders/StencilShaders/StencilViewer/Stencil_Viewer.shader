@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // MIT License
 //
 // Copyright (c) 2017 Noisecrime
@@ -65,7 +67,7 @@ Shader "Stencils/Viewer"
 			v2f vert(appdata v) 
 			{
 				v2f o;
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				return o;
 			}
 			
