@@ -6,32 +6,34 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: GlassRefractiveCustom
-  m_Shader: {fileID: 4800000, guid: edff605987da8ae4fbb64d801ee4243e, type: 3}
+  m_Name: Stencil_03_Unlit
+  m_Shader: {fileID: 4800000, guid: d6748f363eec9964f8c1696d2abcb6b4, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3100
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: bab536ee385a1c54ea2ce6bd3e24f80c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3abd58cbe52f6354fb1a1e20807a4f60, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 66dab46d43e8e754eb9b4f9df20b6494, type: 3}
+        m_Texture: {fileID: 2800000, guid: ca066b74c91e70f4ab548170bc181ea6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BumpAmt: 128
-    - _Shininess: 1
+    - _Shininess: 0.078125
+    - _Stencil: 3
+    - _StencilComp: 3
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilReferenceID: 3
+    - _StencilWriteMask: 255
     m_Colors:
-    - _Color: {r: 0.4233921, g: 0.4233921, b: 0.4233921, a: 0}
-    - _SpecColor: {r: 0.9819277, g: 0.96385545, b: 1, a: 1}
---- !u!1002 &2100001
-EditorExtensionImpl:
-  serializedVersion: 6
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
